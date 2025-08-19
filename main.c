@@ -76,6 +76,20 @@ int main(){
 
     printf("PPM format: %s, width: %d, height: %d, maxval: %d\n", format, width, height, maxval);
 
+    for(int i=0; i<256; i++) {
+        int r = fgetc(file_to_read);
+        int g = fgetc(file_to_read);
+        int b = fgetc(file_to_read);
+
+        // Check if you've reached the end of the file
+        
+        if (r == EOF || g == EOF || b == EOF){
+            fprintf(stderr, "Unexpected end of file!\n");
+            return 0;
+        }
+
+        printf("Pixel %d -> R:%d G:%d B:%d\n", i, r, g, b);
+    }
     fclose(file_to_read);
 
 

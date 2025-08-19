@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Hex Color Preview</title>
+    <title>RGB → Hex Color Preview</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -14,11 +14,15 @@
         margin: 0;
         background-color: #f4f4f4;
       }
+      .inputs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
       input {
         padding: 10px;
         font-size: 16px;
-        margin-bottom: 20px;
-        width: 200px;
+        width: 70px;
         text-align: center;
       }
       #colorBox {
@@ -36,35 +40,62 @@
     </style>
   </head>
   <body>
-    <h1>Hex Color Preview</h1>
-    <input type="text" id="hexInput" placeholder="Enter hex (e.g. #FF5733)" />
+    <h1>RGB → Hex Color Preview</h1>
+    <div class="inputs">
+      <input type="number" id="rInput" placeholder="R" min="0" max="255" />
+      <input type="number" id="gInput" placeholder="G" min="0" max="255" />
+      <input type="number" id="bInput" placeholder="B" min="0" max="255" />
+    </div>
     <div id="colorBox">Preview</div>
 
     <script>
-      const input = document.getElementById("hexInput");
+      const rInput = document.getElementById("rInput");
+      const gInput = document.getElementById("gInput");
+      const bInput = document.getElementById("bInput");
       const colorBox = document.getElementById("colorBox");
 
-      input.addEventListener("input", () => {
-        let hex = input.value.trim();
+      function rgbToHex(r, g, b) {
+        return (
+          "#" +
+          [r, g, b]
+            .map((val) => {
+              const hex = Number(val).toString(16);
+              return hex.length === 1 ? "0" + hex : hex;
+            })
+            .join("")
+        ).toUpperCase();
+      }
 
-        // Add '#' if missing
-        if (hex && !hex.startsWith("#")) {
-          hex = "#" + hex;
-        }
+      function updateColor() {
+        const r = parseInt(rInput.value, 10);
+        const g = parseInt(gInput.value, 10);
+        const b = parseInt(bInput.value, 10);
 
-        // Regex check for valid hex (#RGB, #RRGGBB)
-        const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(hex);
-
-        if (isValidHex) {
+        if (
+          !isNaN(r) &&
+          r >= 0 &&
+          r <= 255 &&
+          !isNaN(g) &&
+          g >= 0 &&
+          g <= 255 &&
+          !isNaN(b) &&
+          b >= 0 &&
+          b <= 255
+        ) {
+          const hex = rgbToHex(r, g, b);
           colorBox.style.backgroundColor = hex;
-          colorBox.textContent = hex.toUpperCase();
+          colorBox.textContent = hex;
           colorBox.style.color = "#fff";
         } else {
           colorBox.style.backgroundColor = "white";
           colorBox.textContent = "Invalid";
           colorBox.style.color = "#333";
         }
-      });
+      }
+
+      [rInput, gInput, bInput].forEach((input) =>
+        input.addEventListener("input", updateColor)
+      );
     </script>
   </body>
 </html>
