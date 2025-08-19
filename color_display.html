@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hex Color Preview</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
+      }
+      input {
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        width: 200px;
+        text-align: center;
+      }
+      #colorBox {
+        width: 200px;
+        height: 200px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hex Color Preview</h1>
+    <input type="text" id="hexInput" placeholder="Enter hex (e.g. #FF5733)" />
+    <div id="colorBox">Preview</div>
+
+    <script>
+      const input = document.getElementById("hexInput");
+      const colorBox = document.getElementById("colorBox");
+
+      input.addEventListener("input", () => {
+        let hex = input.value.trim();
+
+        // Add '#' if missing
+        if (hex && !hex.startsWith("#")) {
+          hex = "#" + hex;
+        }
+
+        // Regex check for valid hex (#RGB, #RRGGBB)
+        const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(hex);
+
+        if (isValidHex) {
+          colorBox.style.backgroundColor = hex;
+          colorBox.textContent = hex.toUpperCase();
+          colorBox.style.color = "#fff";
+        } else {
+          colorBox.style.backgroundColor = "white";
+          colorBox.textContent = "Invalid";
+          colorBox.style.color = "#333";
+        }
+      });
+    </script>
+  </body>
+</html>

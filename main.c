@@ -25,17 +25,58 @@ int main(){
     char original_string[2048] = "The Iowa gambling task fails to bandit theory";
     printf("%s\n", original_string);
 
-    FILE * out;
-    out = fopen("color_test.ppm", "wb");
-    fprintf(out, "P6 256 256 255\n");
-    for(int r=0; r<256; r++) {
-        for(int b=0; b<256; b++) {
-        fputc(r, out);
-        fputc(0, out);
-        fputc(b, out);
-        }
+
+
+    FILE* file_to_read;
+    file_to_read = fopen("sub_mariner.ppm", "rb");
+
+    // Error check
+    if (!file_to_read){
+        perror("The file failed to open!");
+        exit(1);
     }
-    fclose(out);
+
+
+    // first265 pixels
+    // for(int i=0; i<256; i++) {
+    //     int r = fgetc(file_to_read);
+    //     int g = fgetc(file_to_read);
+    //     int b = fgetc(file_to_read);
+    //     printf("Pixel %d -> R:%d G:%d B:%d\n", i, r, g, b);
+    // }
+
+    // This fails because PPM comes in two main "magic number" formats
+    // P3 -> ASCII text 
+    // P6 -> Binary
+
+
+    // Note: File beginds with a header that contians a magic number 
+    // Format of the file: File type |  Width Height | maxval (maximum color calue) | colors in rgb seperated by space
+
+    char format[3];
+    int width, height, maxval;
+
+    if (fscanf(file_to_read, "%2s", format) != 1){
+        fprintf(stderr, "Failed to read PPM format\n");
+        exit(1);
+    }
+
+    if (fscanf(file_to_read, "%d %d", &width, &height) != 2){
+        fprintf(stderr, "Failed to read width/height\n");
+        exit(1);
+    }
+
+    if (fscanf(file_to_read, "%d", &maxval) != 1){
+        fprintf(stderr, "Failed to read maxval\n");
+        exit(1);
+    }
+
+    // Remove extra whitespace 
+    fgetc(file_to_read);
+
+    printf("PPM format: %s, width: %d, height: %d, maxval: %d\n", format, width, height, maxval);
+
+    fclose(file_to_read);
 
 
 
