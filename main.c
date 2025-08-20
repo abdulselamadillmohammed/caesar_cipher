@@ -22,11 +22,10 @@ void decipher(char* start){
 
 int main(){
 
-    char original_string[2048] = "The Iowa gambling task fails to bandit theory";
+    char original_string[2048] = "the iowa gambling task fails to bandit theory";
+    char encrypted_string[2024];
+
     printf("%s\n", original_string);
-
-
-
     FILE* file_to_read;
     file_to_read = fopen("sub_mariner.ppm", "rb");
 
@@ -35,6 +34,7 @@ int main(){
         perror("The file failed to open!");
         exit(1);
     }
+
 
 
     // first265 pixels
@@ -76,22 +76,65 @@ int main(){
 
     printf("PPM format: %s, width: %d, height: %d, maxval: %d\n", format, width, height, maxval);
 
-    for(int i=0; i<256; i++) {
-        int r = fgetc(file_to_read);
-        int g = fgetc(file_to_read);
-        int b = fgetc(file_to_read);
+
+    // To encrypt, forward read and change each to modulo of 
+
+    // 97-122
+
+    // prints z
+    // printf("%c\n", 122);
+
+    // basic idea= get value from r,g,b then value % 26. 
+    // add remainder to current char from original string then modulo 122
+    // then add 97
+
+
+    // This reads rgb all at once which forces 3 indexes at a time
+    // for(int i=0; i<strlen(original_string); i++) {
+    //     int r = fgetc(file_to_read);
+
+    //     int g = fgetc(file_to_read);
+    //     int b = fgetc(file_to_read);
+
+    //     // Check if you've reached the end of the file
+        
+    //     if (r == EOF || g == EOF || b == EOF){
+    //         fprintf(stderr, "Unexpected end of file!\n");
+    //         return 0;
+    //     }
+
+    //     printf("Pixel %d -> R:%d G:%d B:%d\n", i, r, g, b);
+    // }
+
+     for(int i=0; i<strlen(original_string); i++) {
+        int curr = fgetc(file_to_read);
+
+        //printf("%c\n",original_string[0]+1);
 
         // Check if you've reached the end of the file
-        
-        if (r == EOF || g == EOF || b == EOF){
+        if (curr == EOF){
             fprintf(stderr, "Unexpected end of file!\n");
             return 0;
         }
 
-        printf("Pixel %d -> R:%d G:%d B:%d\n", i, r, g, b);
+        // %26
+        int forward_leap = curr % 26;
+        // now encrypted
+        //printf("%d\n",((int)(original_string[i] + forward_leap))%122);
+
+        // only add 97 if its less than 97
+        int hold_val = ((int)(original_string[i] + forward_leap))%122;
+        if (hold_val<26) hold_val += 97;
+        printf("value: %d\n",hold_val);
+
+        original_string[i] = hold_val;
+
+
+        //printf("Value: %d\n", curr);
     }
     fclose(file_to_read);
 
+    printf("%s\n",original_string);
 
 
     return 0;
