@@ -7,6 +7,13 @@
 
 // take rgb -> maps to 3 characters --> handle non equivilant maping
 
+//  s + [insert num] = 26+ therefore modulo it to loop around
+//  s %= 26
+
+// decrypt:
+// looped around version - moduloed curr
+// 
+
 void cipher(char* start){
 }
 
@@ -16,7 +23,7 @@ void decipher(char* start){
 
 int main(){
 
-    char original_string[2048] = "Text to be encrypted";
+    char original_string[2048] = "text to be encrypted";
     char encrypted_string[2024];
     char decrypted_string[2048];
 
@@ -60,19 +67,36 @@ int main(){
             fprintf(stderr, "Unexpected end of file!\n");
             return 0;
         }
-        int current_letter = original_string[i] - 96; // returns 0->26
+
+        if (original_string[i] == 32){
+            encrypted_string[i] = 32;
+            continue;
+        }
+
+        // assume no overflow
+        int current_letter = original_string[i]; // returns 0->26
+        //printf("b: %d\n",current_letter);
         curr %= 26; // how much you want to add to the current letter
         current_letter += curr;
-        current_letter %= 26; // should be within range
+        //current_letter %= 26; // should be within range
 
-        current_letter += 97;
+        // if need to override
+        if (current_letter > 122){
+            current_letter %= 122;
+            current_letter += 97;
+            //printf("n: %d\n",current_letter);
+        }
+        else{
+            //printf("o: %d\n",current_letter);
+        }
+
         encrypted_string[i] = current_letter;
 
     }
 
     encrypted_string[strlen(original_string)] = '\0';
-    printf("%s\n",original_string);
-    printf("%s\n",encrypted_string);
+    printf("Original: %s\n",original_string);
+    printf("Encypted: %s\n",encrypted_string);
 
 
     rewind(file_to_read);
@@ -87,6 +111,8 @@ int main(){
 
 
 
+    printf("--- Decrypt ---\n");
+
     for(int i=0; i<strlen(original_string); i++) {
         int curr = fgetc(file_to_read);
 
@@ -95,26 +121,28 @@ int main(){
             return 0;
         }
 
-        // int current_letter = original_string[i] - 96; // returns 0->26
-        // curr %= 26; // how much you want to add to the current letter
-        // current_letter += curr;
-        // current_letter %= 26; // should be within range
+        if (encrypted_string[i] == 32){
+            decrypted_string[i] = 32;
+            continue;
+        }
 
-        // current_letter += 97;
-        // encrypted_string[i] = current_letter;
 
-        int current_letter = encrypted_string[i] - 96;
+        int current_letter = encrypted_string[i];
         curr %= 26;
+        //printf("%d\n", curr);
         current_letter -= curr;
-        current_letter %= 26;
-        current_letter += 97;
-        decrypted_string[i] = current_letter;
+        if (current_letter < 97){
+            current_letter += 25;
+        }
 
-        
+
+        // current_letter %= 26;
+        // current_letter += 96;
+        decrypted_string[i] = current_letter;
 
     }
     decrypted_string[strlen(original_string)] = '\0';
-    printf("%s\n",decrypted_string);
+    printf("Decypted: %s\n",decrypted_string);
     fclose(file_to_read);
     return 0;
 }
