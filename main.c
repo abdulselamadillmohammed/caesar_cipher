@@ -18,6 +18,7 @@ int main(){
 
     char original_string[2048] = "Text to be encrypted";
     char encrypted_string[2024];
+    char decrypted_string[2048];
 
     printf("%s\n", original_string);
     FILE* file_to_read;
@@ -59,16 +60,61 @@ int main(){
             fprintf(stderr, "Unexpected end of file!\n");
             return 0;
         }
-        curr %= 26;
-        curr += 97;
-        encrypted_string[i] = curr;
+        int current_letter = original_string[i] - 96; // returns 0->26
+        curr %= 26; // how much you want to add to the current letter
+        current_letter += curr;
+        current_letter %= 26; // should be within range
+
+        current_letter += 97;
+        encrypted_string[i] = current_letter;
 
     }
-    fclose(file_to_read);
 
+    encrypted_string[strlen(original_string)] = '\0';
     printf("%s\n",original_string);
     printf("%s\n",encrypted_string);
 
 
+    rewind(file_to_read);
+    // re-read and discard header
+
+
+
+    fscanf(file_to_read, "%2s", format);
+    fscanf(file_to_read, "%d %d", &width, &height);
+    fscanf(file_to_read, "%d", &maxval);
+    fgetc(file_to_read); // eat the whitespace
+
+
+
+    for(int i=0; i<strlen(original_string); i++) {
+        int curr = fgetc(file_to_read);
+
+        if (curr == EOF){
+            fprintf(stderr, "Unexpected end of file!\n");
+            return 0;
+        }
+
+        // int current_letter = original_string[i] - 96; // returns 0->26
+        // curr %= 26; // how much you want to add to the current letter
+        // current_letter += curr;
+        // current_letter %= 26; // should be within range
+
+        // current_letter += 97;
+        // encrypted_string[i] = current_letter;
+
+        int current_letter = encrypted_string[i] - 96;
+        curr %= 26;
+        current_letter -= curr;
+        current_letter %= 26;
+        current_letter += 97;
+        decrypted_string[i] = current_letter;
+
+        
+
+    }
+    decrypted_string[strlen(original_string)] = '\0';
+    printf("%s\n",decrypted_string);
+    fclose(file_to_read);
     return 0;
 }
