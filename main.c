@@ -14,12 +14,6 @@
 // looped around version - moduloed curr
 // 
 
-void cipher(char* start){
-}
-
-void decipher(char* start){
-
-}
 
 int main(){
 
