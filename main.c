@@ -12,7 +12,6 @@
 
 // decrypt:
 // looped around version - moduloed curr
-// 
 
 
 int main(){
